@@ -1,2 +1,2 @@
 Código     Nome Preco Normal Preço Desc. 
-    76 Micro-Computador   908.98   890.80
+    77 Travesseiro    25.90    25.38

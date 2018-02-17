@@ -116,8 +116,8 @@ then
 	# Store data to $VALUES variable
 	VALUES=$(dialog --ok-label "Envio" \
 		--backtitle "Gerenciamento de $FRAME" \
-		--title "Atualiza $FRAME"" \
-		--form "Atualiza $FRAME"" \
+		--title "Atualiza $FRAME" \
+		--form "Atualiza $FRAME" \
 		15 50 0 \
 		"Codigo :" 1 1 "$codigo" 1 10 10 0 \
 		"Produto:" 2 1 "$produto" 2 10 40 0 \
