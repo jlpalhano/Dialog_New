@@ -1,0 +1,4 @@
+73	Trigo1
+74	Marmelada
+75	Queijo
+76	Micro-Computador

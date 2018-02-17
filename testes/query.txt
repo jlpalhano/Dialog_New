@@ -1,0 +1,36 @@
+1	Monitor
+2	$1
+3	Caneca
+4	Caneca
+5	Caneca
+6	Caneca
+7	Caneca
+8	Caneca
+9	Caneca
+10	Caneca
+11	Caneca
+12	Caneca
+13	Caneca
+14	Caneca
+15	Caneca
+16	Caneca
+17	Caneca
+18	Caneca
+19	Caneca
+20	Caneca
+21	Caneca
+22	Caneca
+23	Alcool
+24	Caneca
+25	Alcool
+26	Caneca
+27	Alcool
+28	Caneca
+29	Alcool
+30	Caneca
+31	Caneta
+32	Caneca
+33	Caneta
+34	
+35	Perdiz com osso
+36	
