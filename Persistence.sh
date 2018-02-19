@@ -143,10 +143,10 @@ then
 
 	export IFS="$IFSold"
 	
-	dialog --title "Confirmacao" \
-		--msgbox "cod_prod: $cod_prod\n \
-			 Produto: $Produto\n \
-			 Preco: $Preco\n"
+	dialog --title "Confirmacao" 		\
+	       --msgbox "cod_prod: $cod_prod\n 	\
+			 Produto: $Produto\n 	\
+			 Preco: $Preco\n" 	\
 			 0 0
 	atualiza_dados_db $Produto $Preco $cod_prod
 
