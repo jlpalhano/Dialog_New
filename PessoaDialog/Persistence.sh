@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="0.1_b19022018"
+VERSION="0.1_b17022018"
 FRAME=Produto
 frame=produto
 export NCURSES_NO_UTF8_ACS=1
@@ -18,21 +18,16 @@ while [ -z "${produto}" ]
 do
         produto=$( dialog --stdout \
 		--title "Adicionar $FRAME" \
-		--inputbox "Digite o nome do ${frame}:" \
-		0 0
-	 )
-
+		--inputbox "Digite o nome do ${frame}:" 0 0 )
 	[ -z "${produto}" ] && ( dialog --msgbox "Insira um nome de ${frame} valido." 0 0 ; continue) || break
+
 done
 
 preco=""
 while [ -z "${preco}" ]
 do
         preco=$( dialog --stdout \
-		--inputbox "Digite o preço:" \
-		0 0 
-		)
-
+		--inputbox 'Digite o preço:' 0 0 )
 	[ -z "${preco}" ] && ( dialog --msgbox "Insira um Preco valido." 0 0 ; continue) || break
 done
 insere_dados_db $produto $preco
@@ -46,16 +41,10 @@ if [ -s produtos.tmp ];
 then
 	awk 'BEGIN {printf("%s %8s %8s %8s \n" ,"Código", "Nome", "Preco Normal", "Preço Desc.")}
 	{printf("%6.0f %8s %8.2f %8.2f\n", $1, $2, $3, $4)}' produtos.tmp > tmp2
-	dialog --stdout \
-	       --extra-button --extra-label "Imprimir" \
-	       --title "Lista de Preços" \
-	       --textbox tmp2 \
-	       0 0
- 	retornos $?
+	dialog --stdout  --extra-button --extra-label "Imprimir" --title "Lista de Preços" --textbox tmp2 0 0
+		retornos $?
 else
-	dialog --title "Atenção" \
-	       --msgbox "Nao foi encontrado nenhum ${frame} para exibir." \
-	       0 0
+	dialog --title "Atenção" --msgbox "Nao foi encontrado nenhum ${frame} para exibir." 0 0
 fi
 #rm produtos.tmp            
 }
@@ -79,12 +68,9 @@ awk 'BEGIN {printf("%s %8s %8s %8s \n" ,"Código", "Nome", "Preco Normal", "Pre�
 {printf("%6.0f %8s %8.2f %8.2f\n", $1, $2, $3, $4)}' produtos.tmp > res
 
 	dialog --title "Lista de Preços encontrados por ${PRODUTO}:" \
-	       --textbox res \
-	       0 0
+		--textbox res 0 0
 else
-	dialog --title "Atenção" \
-	       --msgbox "Nao foi encontrado nenhum ${frame} com esta descrição." \
-	       0 0
+	dialog --title "Atenção" --msgbox "Nao foi encontrado nenhum ${frame} com esta descrição." 0 0
 fi
 }
 
@@ -101,15 +87,10 @@ options=()
 		50 80 10 \
 		"${options[@]}"
 	)
-dialog --stdout --title "Confirmacao" --yesno "Tem certeza que deseja excluir o item?" 0 0
-case $? in
-0)
-DELETE=$( echo $escolha | tr -d '[:alpha:]' | sed 's/ *$//g' |  sed 's/\s\s/,/g' ) ;# tr apaga todas as palavras, primeiro sed pega os numeros q sao saida do comando tr e colica ", entre eles". O ultimo sed deleta a ultima virgula da lista, pra ficar no padrao sql 1,2,3,4
-apaga_dados_db $DELETE;;
-1) dialog --title "Operacao Cancelada" --msgbox "Foi cancelada a remocao do ${frame}." 0 0 ;;
-*) echo "Qual dado em $?"
-esac
+DELETE=$( echo $escolha | tr -d '[:alpha:]' | sed 's/ *$//g' |  sed 's/\s\s/,/g' ) # tr apaga todas as palavras, primeiro sed pega os numeros q sao saida do comando tr e colica ", entre eles". O ultimo sed deleta a ultima virgula da lista, pra ficar no padrao sql 1,2,3,4
+apaga_dados_db $DELETE
 }
+
 
 editar_dados(){
 PRODUTO=""
@@ -117,24 +98,13 @@ while [ -z "${PRODUTO}" ]
 do
 	PRODUTO=$( dialog --stdout \
 		--title "Informe o ${FRAME}" \
-	 	--inputbox "Digite o nome do ${frame} a editar" \
-		0 0
-	 )
-
- dialog --title "Retorno" --msgbox "Retorno ${frame} - $?." 0 0 
-
-	case $? in
-	0) seleciona_dados_edicao_db ${PRODUTO};;
-	1) dialog --title "Operacao Cancelada" --msgbox "Foi cancelada a edicao do ${frame}." 0 0 ;
-	break;;
-	*) echo "Qualquer dado vindo na edição";;
-	esac
-
+	 	--inputbox "Digite o nome do ${frame} a editar" 0 0 )
 	[ -z "${PRODUTO}" ] && ( dialog --msgbox "Insira um nome de ${frame} valido." 0 0 ; continue) || break
 done
-
+seleciona_dados_edicao_db ${PRODUTO}
 if [ -s produtos.tmp ];
 then
+
 
 	codigo=$( awk '{print $1}' produtos.tmp )
 	produto=$( awk '{print $2}' produtos.tmp )
