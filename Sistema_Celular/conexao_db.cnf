@@ -1,0 +1,9 @@
+MYSQL="/usr/bin/mysql"  #Local do comando mysql
+OPTS="-N" 		#Nao exibe cabecalhos
+USER_MYSQL="sistema"
+SENHA_MYSQL="sistema"
+DATABASE="sistema"
+
+STRING_CONN_BANCO="$MYSQL $OPTS -u$USER_MYSQL -p$SENHA_MYSQL $DATABASE -e"
+STRING_CONN_BANCO_TF="$MYSQL -t $OPTS -u$USER_MYSQL -p$SENHA_MYSQL $DATABASE -e"
+

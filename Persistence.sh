@@ -8,6 +8,8 @@ export NCURSES_NO_UTF8_ACS=1
 
 retornos(){
 case $1 in
+1) echo "Operacao cancelada"
+2)
 3) imprimir;;
 esac
 }
@@ -135,7 +137,7 @@ done
 
 if [ -s produtos.tmp ];
 then
-
+ 
 	codigo=$( awk '{print $1}' produtos.tmp )
 	produto=$( awk '{print $2}' produtos.tmp )
 	preco=$( awk '{print $4}' produtos.tmp )
@@ -182,7 +184,9 @@ then
 
 
 else
-	dialog --title "Atenção" --msgbox "Nao foi encontrado nenhum ${frame} com esta descrição." 0 0
+	dialog --title "Atenção" \ 
+	       --msgbox "Nao foi encontrado nenhum ${frame} com esta descrição."  \
+	       0 0
 fi	
 
 }
