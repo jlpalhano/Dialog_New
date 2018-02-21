@@ -4,4 +4,6 @@ PROGRAMA="Gestao Celulares"
 FRAME="Cadastro Pessoa"
 frame=pessoa
 export NCURSES_NO_UTF8_ACS=1
+DIALOG="/usr/bin/dialog --backtitle "$PROGRAMA__$VERSION""   #Nao alterar
 
+#echo $DIALOG

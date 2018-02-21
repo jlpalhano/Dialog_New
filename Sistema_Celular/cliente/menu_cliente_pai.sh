@@ -1,9 +1,10 @@
+#!/bin/bash
+. config_programa.txt
 manter_cliente_gui(){
-. ./menu_cliente_filho.sh
 while : ; do
 
 OPCAO=$(
-        dialog --stdout \
+        $DIALOG --stdout \
         --title "Manutencao de $FRAME $VERSION" \
         --menu 'Escolha um opcao: ' \
         0 0 0 \
@@ -16,16 +17,21 @@ OPCAO=$(
 
 [ $? -ne 0 ] && break
 case $OPCAO in
-        1) 
+        1)
+	. ./cliente/insere_dados_cliente.sh;
         insere_dados_cliente;;
         2) 
-        lista_dados_cliente;;
+        . ./cliente/lista_dados_cliente.sh;
+	lista_dados_cliente;;
         3)
+	. ./cliente/pesquisa_dados_cliente.sh;
         pesquisa_dados_cliente;;
         4) 
-        apaga_dados;;
-        5) 
-        editar_dados;;
+	. ./cliente/apaga_dados_cliente.sh;
+        apaga_dados_cliente;;
+        5)
+	. ./cliente/editar_dados_cliente.sh
+	editar_dados_cliente;; 
 esac
 
 done

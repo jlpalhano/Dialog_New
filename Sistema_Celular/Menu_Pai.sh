@@ -1,8 +1,9 @@
 . ./PrincipalDialog.sh
+. ./config_programa.txt
 while : ; do
 
 OPCAO=$(
-        dialog --stdout \
+        $DIALOG --stdout \
         --title "Nenu Principal $VERSION" \
         --menu 'Escolha um opcao: ' \
         0 0 0 \
@@ -16,7 +17,7 @@ OPCAO=$(
 
 case $OPCAO in
         1)
-	. ./menu_cliente_pai.sh
+	. ./cliente/menu_cliente_pai.sh
 	FRAME=Cliente;
 	FNC="_cli";
 	manter_cliente_gui;;

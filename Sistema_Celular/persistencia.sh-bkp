@@ -63,13 +63,6 @@ $STRING_CONN_BANCO_TF "SELECT * FROM tbl_pessoa
 }
 
 atualiza_dados_cliente_db(){
-#echo "UPDATE FROM tbl_pessoa
-#        SET nome="$2",
-#            endereco='$3'
-#                WHERE idPessoa="$1";"
-
-
-
 CODIGO="$1"
 TP_PESSOA="$2"
 NOME="$3"
@@ -79,31 +72,24 @@ CPF_CNPJ="$6"
 ENDERECO="$7"
 OBSPES="$8"
 EMAIL="$9"
-TELEFONE="${10}"  # Para mais de 10 parametros usar as {} na variavel
-sleep 10
-$STRING_CONN_BANCO "UPDATE tbl_pessoa           	\
-        SET tpPessoa='$TP_PESSOA',                      \
-                         nmPessoa='$NOME',              \
-                         snomePessoa='$SNOME',  	\
-                         dtNascimento='$DT_NASC',       \
-                         cpf='$CPF_CNPJ',               \
-                         endereco='$ENDERECO',  	\
-                         obsPessoa='$OBSPES',           \
-                         email='$EMAIL',                \
-                         telefone='$TELEFONE'   	\
-                         WHERE idPessoa='$CODIGO';"
-}
+TELEFONE="$10"
+$STRING_CONN_BANCO "UPDATE tbl_pessoa
+	SET tpPessoa="$TP_PESSOA",
+			 nmPessoa="$TP_PESSOA",
+			 snomePessoa="$SNOME",
+			 dtNascimento="$DT_NASC",
+		       	 cpf="$CPF_CNPJ", 
+		         endereco="$ENDERECO",
+			 obsPessoa="$OBSPES",
+			 email="$EMAIL",
+			 telefone="$TELEFONE"
+				WHERE idPessoa="$CODIGO";"
 
 
-seleciona_itens_delete_db(){
-$STRING_CONN_BANCO "SELECT idPessoa, nmPessoa
-        FROM tbl_pessoa;" > query.txt
-}
-apaga_dados_cliente_db(){
-DELETE="$1"
-echo "$STRING_CONN_BANCO DELETE FROM tbl_pessoa \
-        WHERE idPessoa IN ( "$DELETE" );"
-sleep 4
-$STRING_CONN_BANCO "DELETE FROM tbl_pessoa 	\
-        WHERE idPessoa IN ( '$DELETE' );"
+
+#$sql    "UPDATE produto
+#                SET nomeProduto='$PRODUTO',
+#                        precoNormal='$PRECO'
+#                        WHERE idProduto='$CODIGO';"
+
 }

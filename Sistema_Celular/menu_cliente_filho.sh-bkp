@@ -1,0 +1,293 @@
+#!/bin/bash
+
+. ./persistencia.sh
+
+insere_dados_cliente(){
+
+status(){
+retorno=$?
+case $retorno in
+	1) dialog --yesno "Deseja Sair?" 0 0;;
+	2) dialog --yesno "Deseja Sair?" 0 0;;
+	255) dialog --yesno "Deseja Sair?" 0 0;;
+esac
+}
+
+tipoPessoa=$( 
+dialog                                           \
+   --stdout					 \
+   --title 'Pergunta'                            \
+   --radiolist "Digite o tipo da pessoa J - Juridica, F - Fisica do ${frame}:"  \
+   0 0 0                                         \
+   J  'Pessoa Juridica'      off                \
+   F  'Pessoa Fisica'  on               \
+
+         )
+status
+
+nome=$( dialog --stdout \
+                --title "Adicionar $FRAME" \
+                --inputbox "Digite o nome do ${frame}:" \
+                0 0
+         )
+status
+
+sobrenome=$( dialog --stdout \
+                --title "Adicionar $FRAME" \
+                --inputbox "Digite o sobrenome do ${frame}:" \
+                0 0
+         )
+status
+
+dataNascimento=$( dialog --stdout \
+                --title "Adicionar $FRAME" \
+                --inputbox "Digite a Data Nascimento do ${frame}:" \
+                0 0
+         )
+
+cpf_cnpj=$( dialog --stdout \
+                --title "Adicionar $FRAME" \
+                --inputbox "Digite o cpf/cnpj do ${frame}:" \
+                0 0
+         )
+status
+
+endereco=$( dialog --stdout \
+                --title "Adicionar $FRAME" \
+                --inputbox "Digite o endereco do ${frame}:" \
+                0 0
+         )
+status
+
+obsPessoa=$( dialog --stdout \
+                --title "Adicionar $FRAME" \
+                --inputbox "Digite as observaçoes adicionais do ${frame}:" \
+                0 0
+         )
+status
+
+email=$( dialog --stdout \
+                --title "Adicionar $FRAME" \
+                --inputbox "Digite o e-mail do ${frame}:" \
+                0 0
+         )
+status
+
+telefone=$( dialog --stdout \
+                --title "Adicionar $FRAME" \
+                --inputbox "Digite o telefone do ${frame}:" \
+                0 0
+         )
+status
+
+
+insere_dados_cliente_db "$tipoPessoa" "$nome" "$sobrenome" "$dataNascimento" "$cpf_cnpj"  "$endereco" "$obsPessoa" "$email" "$telefone"
+}
+
+
+
+#---------------------------------------------LISTA DE CLIENTES---------------------------------------------------------
+
+
+lista_dados_cliente(){
+lista_dados_cliente_db
+
+if [ -s clientes.tmp ];
+then
+sed  -i '$d;1d' clientes.tmp # Remove a primeira e ultima linha do arquivo
+
+#O awk asegui precisa ser execudato a com o resultado da execução do comando STRING_CONN_BANCO_TF, que esta definido no arquivo de conexao
+#Usando como separador o | 
+ awk -F"|" 'BEGIN {printf("%-10s %-10s %s %s %s \n" ,"Código", "Tipo Pess.", "Nome", "E-mail", "Telefone" )}
+        {printf("%6.0f  %-10s %s %s %s\n", $2, $3, $4, $10, $11)}' clientes.tmp > tmp2
+	dialog --stdout \
+               --extra-button --extra-label "Imprimir" \
+               --title "Lista de $FRAME" \
+               --textbox tmp2 \
+               0 0
+	  status 
+else
+        dialog --title "Atenção" \
+               --msgbox "Nao foi encontrado nenhum ${frame} para exibir." \
+               0 0
+fi
+#rm produtos.tmp
+}
+
+
+
+
+
+pesquisa_dados_cliente(){
+
+CLIENTE=""
+while [ -z "${CLIENTE}" ]
+do
+        CLIENTE=$( dialog --stdout \
+                  --title "Pesquisa $FRAME" \
+                  --inputbox "Digite o nome do ${frame}" \
+                  0 0 )
+
+        [ -z "${CLIENTE}" ] && ( dialog --msgbox "Insira um nome de ${frame} valido." 0 0 ; continue) || break
+done
+pesquisa_dados_cliente_db ${CLIENTE}
+# Se funcao pesquisa_dados_db retornou dados, insere no arquivo produtos.tmp, caso contrario sera vazia. If abaixo testa se o arquivo esta vazio
+# para entao montar a tela
+if [ -s clientes.tmp ]; then
+	 sed  -i '$d;1d' clientes.tmp #Remove a primeira e ultima linha, caso o arquivo tenha dados
+	 awk -F"|" 'BEGIN {printf("%-10s %-10s %s %s %s \n" ,"Código", "Tipo Pess.", "Nome", "E-mail", "Telefone" )}
+        {printf("%6.0f  %-10s %s %s %s\n", $2, $3, $4, $10, $11)}' clientes.tmp > res
+
+        dialog --title "Lista de Clientes encontrados por Cliente:" \
+               --textbox res \
+               0 0
+else
+        dialog --title "Atenção" \
+               --msgbox "Nao foi encontrado nenhum ${frame} com esta descrição." \
+               0 0
+fi
+
+}
+
+
+
+
+
+
+
+editar_dados_cliente(){
+CLIENTE=""
+while [ -z "${CLIENTE}" ]
+do
+        CLIENTE=$( dialog --stdout \
+                --title "Informe o ${FRAME}" \
+                --inputbox "Digite o nome do ${frame} a editar" \
+                0 0
+         )
+
+        case $? in
+        0) seleciona_dados_edicao_cliente_db ${CLIENTE};
+	sleep 5;;
+        1) dialog --title "Operacao Cancelada" --msgbox "Foi cancelada a edicao do ${frame}." 0 0 ;
+        break;;
+        *) echo "Qualquer dado vindo na edição";;
+        esac
+
+        [ -z "${CLIENTE}" ] && ( dialog --msgbox "Insira um nome de ${frame} valido." 0 0 ; continue) || break
+done
+
+if [ -s clientes.tmp ];
+then
+sleep 5
+sed  -i '$d;1d' clientes.tmp # Remove a primeira e ultima linha do arquivo
+codigo=$( awk -F"|" '{print $2}' clientes.tmp | sed 's/\s//; s/ *$//' )
+tipoPessoa=$( awk -F"|" '{print $3}' clientes.tmp | sed 's/\s//; s/ *$//' )
+nome=$( awk -F"|" '{print $4}' clientes.tmp | sed 's/\s//; s/ *$//' )
+sobrenome=$( awk -F"|" '{print $5}' clientes.tmp | sed 's/\s//; s/ *$//' )
+dataNascimento=$( awk -F"|" '{print $6}' clientes.tmp | sed 's/\s//; s/ *$//' )
+cpf_cnpj=$( awk -F"|" '{print $7}' clientes.tmp | sed 's/\s//; s/ *$//' )
+endereco=$( awk -F"|" '{print $8}' clientes.tmp | sed 's/\s//; s/ *$//' )
+obsPessoa=$( awk -F"|" '{print $9}' clientes.tmp | sed 's/\s//; s/ *$//' )
+email=$( awk -F"|" '{print $10}' clientes.tmp  | sed 's/\s//; s/ *$//' )
+telefone=$( awk -F"|" '{print $11}' clientes.tmp | sed 's/\s//; s/ *$//' )
+
+
+# open file descriptor (fd)
+        exec 3>&1
+
+        # Store data to $VALUES variable
+	 #"String:" LINHA COLUNA "$VARIAVEL_OU_TEXTO_OU_""_SE_NECESSARIO" LINHA COLUNA COMPR_CAMPO QTD_CARAC
+                #"Codigo :" 1 1 "$codigo" 1 10 10 0 \
+
+        VALUES=$( dialog --ok-label "Envio" \
+                --backtitle "Gerenciamento de $FRAME" \
+                --title "Atualiza $FRAME" \
+                --form "Atualiza $FRAME" \
+                0 0 0 \
+		"Codigo :" 1 1 "$codigo" 1 9 5 5 \
+		"Tipo Pessoa:" 2 1 "$tipoPessoa" 2 10 2 2 \
+		"Nome :" 3 1 "$nome" 3 10 15 15 \
+		"Sobrenome :" 4 1 "$sobrenome" 4 10 45 45 \
+		"Data Nascimento:" 5 1 "$dataNascimento" 5 10 12 10 \
+		"CPF/CNPJ :" 6 1 "$cpf_cnpj" 6 10 15 15 \
+		"Endereço :" 7 1 "$endereco" 7 10 50 50 \
+		"OBS:" 8 1 "$obsPessoa" 8 10 50 50 \
+		"E-mail :" 9 1 "$email" 9 10 30 50 \
+		"Telefone :" 10 1 "$telefone" 10 10 20 20 \
+        2>&1 1>&3)
+
+        # close fd
+        exec 3>&-
+
+        i=1
+        IFSold=$IFS
+        export IFS="
+        "
+                for valores in "$VALUES";do
+                        case "$i" in
+				
+				1)Codigo="$valores";
+				echo "O codigo $Codigo";
+				sleep 5;;
+				2)TipoPessoa="$valores";
+				echo "tp pess $TipoPessoa";;
+				3)Nome="$valores";
+				echo "O Nome: $Nome";;
+				4)Sobrenome="$valores";
+				echo "Sobrenome $Sobrenome";;
+				5)DataNascimento="$valores";
+				echo "DataNascimento $DataNascimento";;
+				6)cpf_cnpj="$valores";
+				echo "cpf_cnpj $cpf_cnpj";;
+				7)Endereco="$valores";
+				echo "Endereco $Endereco";;
+				8)ObsPessoa="$valores";
+				echo "ObsPessoa $ObsPessoa";;
+				9)Email="$valores";
+				echo "Email $Email";;
+				10)Telefone="$valores";
+				echo "Telefone $Telefone";
+				sleep 10
+                        esac
+                i=`expr $i + 1`
+                done
+Codigo=$( echo "${Codigo}" | sed -e 's/\s/_/g' )
+TipoPessoa=$( echo "${TipoPessoa}" | sed -e 's/\s/_/g' )
+Nome=$( echo "${Nome}" | tr "|" "_" )
+Sobrenome=$( echo "${Sobrenome}" | sed -e 's/\s/_/g' )
+DataNascimento=$( echo "${DataNascimento}" | sed -e 's/\s/_/g' )
+cpf_cnpj=$( echo "${cpf_cnpj}" | sed -e 's/\s/_/g' )
+Endereco=$( echo "${Endereco}" | sed -e 's/\s/_/g' )
+ObsPessoa=$( echo "${ObsPessoa}" | sed -e 's/\s/_/g' )
+Email=$( echo "${Email}" | sed -e 's/\s/_/g' )
+Telefone=$( echo "${Telefone}" | sed -e 's/\s/_/g' )
+
+
+
+
+        export IFS="$IFSold"
+	eval \
+        dialog --title "Confirmacao"            			\
+               --msgbox							\
+			Codigo: "$Codigo"				\
+			TipoPessoa: "$TipoPessoa"			\
+			Nome "$Nome"					\
+			Sobrenome: "$Sobrenome"				\
+			DataNascimento: "$DataNascimento"		\
+			cpf_cnpj: "$cpf_cnpj"				\
+			Endereco: "$Endereco"				\
+			ObsPessoa: "$ObsPessoa"				\
+			Email: "$Email"					\
+			Telefone "$Telefone" 				\
+                        0 0
+atualiza_dados_cliente_db "$Codigo" "$TipoPessoa" "$Nome" "$Sobrenome" "$DataNascimento" "$cpf_cnpj" "$Endereco" "$ObsPessoa" "$Email" "$Telefone"
+echo "atualiza_dados_cliente_db "Cod $Codigo" "TP $TipoPessoa" "Nome $Nome" "Sobre $Sobrenome" "DT NAS $DataNascimento" "CPF $cpf_cnpj" "End $Endereco" "Obs $ObsPessoa" "email $Email" "tel $Telefone""
+sleep 5
+else
+        dialog --title "Atenção" \
+               --msgbox "Nao foi encontrado nenhum ${frame} com esta descrição."  \
+               0 0
+fi
+
+}
+
