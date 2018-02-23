@@ -1,0 +1,6 @@
+#!/bin/bash
+PROGRAMA="Gestao Celulares"
+FRAME="Cadastro Chamados"
+frame=chamados
+export NCURSES_NO_UTF8_ACS=1
+

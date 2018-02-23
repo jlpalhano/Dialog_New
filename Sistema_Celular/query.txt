@@ -1,4 +1,7 @@
-1	Jeferson
-12	Joelson_
-13	Eduarda
-14	Raul
+3	AZUS	Zenfone 3
+4	Sony 	ERICSON 2054
+5	SANSUNG	1128
+6	Semp Toshiba	Flap 345
+7	Flas	
+8	Gradiente	5123
+9	Motorola	2367
